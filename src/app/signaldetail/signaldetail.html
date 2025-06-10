@@ -1,50 +1,46 @@
+<!-- signaldetail.html -->
 <div class="signal-detail-container" *ngIf="signal$ | async as signal">
   <div class="detailed-dashboard">
     <header class="dashboard-header">
       <div class="asset-title">
-        <h1>{{signal.symbol}}</h1>
+        <h1>{{ signal.symbol }}</h1>
+        <div class="current-time">{{ currentTime }} UTC</div>
       </div>
     </header>
 
     <div class="trading-metrics">
       <div class="metric-card">
-        <div class="metric-value">{{signal.Entry}}</div>
+        <div class="metric-value">{{ signal.Entry }}</div>
         <div class="metric-label">Entry</div>
       </div>
       <div class="metric-card">
-        <div class="metric-value">{{signal.Target1}}</div>
+        <div class="metric-value">{{ signal.Target1 }}</div>
         <div class="metric-label">Target</div>
       </div>
       <div class="metric-card">
-        <div class="metric-value">{{signal.StopLoss}}</div>
+        <div class="metric-value">{{ signal.StopLoss }}</div>
         <div class="metric-label">Stop</div>
       </div>
       <div class="metric-card">
-        <div class="metric-value">{{signal.duration}}</div>
+        <div class="metric-value">{{ signal.duration }}</div>
         <div class="metric-label">Duration</div>
       </div>
     </div>
 
     <div class="strategy-info">
-      <div class="strategy-tag buy-limit">{{signal.type}}</div>
+      <div class="strategy-tag buy-limit">{{ signal.type }}</div>
     </div>
 
-    <!-- TradingView Chart Widget -->
     <div class="chart-section">
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget" id="signaldetail-widget"></div>
-      </div>
+      <img [src]="signal.chart_url" alt="Chart" class="chart-image">
     </div>
 
     <div class="trend-analysis" *ngIf="signal.trend">
       <div class="section-title">Trend Analysis</div>
-      <div class="trend-content">
-        {{signal.trend}}
-      </div>
+      <div class="trend-content">{{ signal.trend }}</div>
     </div>
 
-    <!-- Economic Events Section -->
-    <div class="economic-events" *ngIf="signal.events && signal.events.length">
+    <div class="economic-events" *ngIf="signal.events?.length">
       <div class="section-title">Economic Events</div>
       <div class="events-container">
         <div class="event-card" *ngFor="let event of signal.events">
@@ -74,7 +70,12 @@
     <button class="btn back-btn" (click)="goBack()">
       <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
     </button>
+
+    <!-- Debug output -->
+    <pre>{{ signal | json }}</pre>
   </div>
-  <pre>{{ signal | json }}</pre>
 </div>
-<div *ngIf="loadingError" style="color:red">{{ loadingError }}</div>
+
+<div *ngIf="loadingError" class="error-message">
+  {{ loadingError }}
+</div>

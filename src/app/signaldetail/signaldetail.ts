@@ -1,10 +1,11 @@
 // signaldetail.ts
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { TradingSignal } from '../TradingSignal';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { ApiService } from '../service/httpservice';
+import { TradingSignal } from '../TradingSignal';
 
 @Component({
   selector: 'app-signaldetail',
@@ -17,16 +18,11 @@ export class Signaldetail implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private apiService = inject(ApiService);
-  
-  signal$: Observable<TradingSignal | null>;
-  loadingError: string | null = null;
-  currentTime: string;
-  rawData: any; // For debugging
 
-  constructor() {
-    this.signal$ = of(null);
-    this.currentTime = new Date().toLocaleTimeString();
-  }
+  signal$: Observable<TradingSignal | null> = of(null);
+  loadingError: string | null = null;
+  currentTime: string = new Date().toLocaleTimeString();
+  rawData: any;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -36,22 +32,26 @@ export class Signaldetail implements OnInit {
     }
 
     this.signal$ = this.apiService.get<any>(`get-signal/${id}`).pipe(
-      tap(data => {
-        // If data is a string, parse it
+      map(data => {
         if (typeof data === 'string') {
           data = JSON.parse(data);
         }
-        data.type = data.Type || data.type;
-        data.Entry = data.Entry || data.entry;
-        data.Target1 = data.Target1 || data.target1;
-        data.Target2 = data.Target2 || data.target2;
-        data.StopLoss = data.StopLoss || data.stopLoss;
-        // ...map other fields as needed
 
-        this.rawData = data;
+        // Normalize casing
+        const normalized: TradingSignal = {
+          ...data,
+          type: data.Type || data.type || '',
+          Entry: data.Entry || data.entry || '',
+          Target1: data.Target1 || data.target1 || '',
+          Target2: data.Target2 || data.target2 || '',
+          StopLoss: data.StopLoss || data.stopLoss || ''
+        };
+
+        this.rawData = normalized;
+        return normalized;
       }),
-      catchError(error => {
-        console.error('Error loading signal:', error);
+      catchError(err => {
+        console.error('Failed to load signal:', err);
         this.loadingError = 'Failed to load signal data';
         return of(null);
       })
