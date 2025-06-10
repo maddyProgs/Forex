@@ -1,56 +1,72 @@
 <div class="signal-detail-container" *ngIf="signal$ | async as signal">
-  <div class="detailed-dashboard">
-    <header class="dashboard-header">
-      <div class="asset-title">
-        <h1>{{ signal.symbol }}</h1>
-      </div>
-      <!-- <div class="price-info">
+      <div class="detailed-dashboard">
+        <header class="dashboard-header">
+            <div class="asset-title">
+                <h1>US100</h1>
+                <h1>US100</h1>
+            </div>
+            <div class="price-info">
                 <div class="current-price">21214</div>
                 <div class="price-change">-109 (-0.51%)</div>
-            </div> -->
-    </header>
+            </div>
+        </header>
 
-    <!-- <div class="trading-metrics">
-      <div class="metric-card">
-        <div class="metric-value">{{ signal.Entry }}</div>
-        <div class="metric-label">Entry</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">{{ signal.Target1 }}</div>
-        <div class="metric-label">Target</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">{{ signal.Target2 }}</div>
-        <div class="metric-label">Target</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">{{ signal.StopLoss }}</div>
-        <div class="metric-label">Stop</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">{{ signal.duration }}</div>
-        <div class="metric-label">Duration</div>
-      </div>
-    </div> -->
+        <div class="trading-metrics">
+            <div class="metric-card">
+                <div class="metric-value">21070</div>
+                <div class="metric-label">Entry</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">21645</div>
+                <div class="metric-label">Target</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">20895</div>
+                <div class="metric-label">Stop</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">Intraday</div>
+                <div class="metric-label">Duration</div>
+            </div>
+        </div>
 
-    <!-- <div class="chart-section">
+        <div class="strategy-info">
+            <div class="strategy-tag buy-limit">BUY LIMIT</div>
+            <div class="confidence-indicator">
+                <div class="confidence-label">Confidence</div>
+                <div class="confidence-value">58%</div>
+            </div>
+            <div class="sentiment-indicator">
+                <div class="sentiment-label">News Sentiment</div>
+                <div class="sentiment-value">42%</div>
+            </div>
+        </div>
+        
+
+        <div class="chart-section">
+            <h2>Market Chart (4H)</h2>
             <div class="chart-controls">
             </div>
             <div class="chart-container">
                 <img src="https://res.cloudinary.com/dejlkojff/image/upload/v1748324494/chart_2025052709/EURUSD.jpg" alt="US100 4H Chart" class="chart-image">
             </div>
+            <div class="chart-footer">
+                <div class="chart-info">US100 - 4h Q2(253) #21271 L21177 C21194 - 98 (-0.27%)</div>
+                <div class="chart-note">Press and hold Ctrl while zooming to maintain the chart position</div>
+            </div>
         </div>
-           -->
-    <div class="trend-analysis">
-      <div class="section-title">{{ signal.trend }}</div>
-      <div class="trend-content">{{ signal.trend }}</div>
-    </div>
-  </div>
-
-  <!-- <div class="economic-events">
+           <!-- Add this right after the strategy-info div -->
+        <div class="trend-analysis">
+            <div class="section-title">Trend Analysis</div>
+            <div class="trend-content">
+                Uptrend with Range-Bound Price Action: Consolidation within a defined upward range.
+            </div>
+        </div>
+                <!-- Economic Events Section -->
+        <div class="economic-events">
             <div class="section-title">Economic Events</div>
             <div class="events-container" id="eventsContainer">
-                
+                <!-- Events will be loaded here from CSV -->
                 <div class="event-card">
                     <div class="event-time">22:00 <span class="event-country">AU</span></div>
                     <div class="event-name">Markit Manufacturing PMI Final DEC</div>
@@ -71,5 +87,16 @@
                     <div class="event-impact medium">MEDIUM</div>
                 </div>
             </div>
-        </div> -->
-</div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="timestamp">13:21:28 (UTC)</div>
+            <div class="auto-log">Log auto</div>
+        </div>
+
+        <button class="btn back-btn" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+        </button>
+    </div>
+
+    <script src="dashboard.js"></script>

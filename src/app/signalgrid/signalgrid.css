@@ -680,3 +680,27 @@ body {
     background-color: #ecfdf5;
     color: var(--success-color);
 }
+.tradingview-widget-container {
+  margin: 1rem 0;
+  width: 100%;
+  min-height: 220px;
+  position: relative;
+}
+
+.tradingview-widget-container__widget {
+  width: 100%;
+  height: 220px;
+}
+
+.tradingview-widget-copyright {
+  font-size: 11px;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.blue-text {
+  color: #2962FF;
+}

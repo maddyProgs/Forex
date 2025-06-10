@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ApiService } from '../service/httpservice';
 import { CommonModule } from '@angular/common';
 import { faInfoCircle, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -6,7 +6,6 @@ import { map, Observable } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
 import { TradingSignal } from '../TradingSignal';
-import { TradingviewWidgetComponent } from '../tradingview-widget/tradingview-widget';
 import { Signaldetail } from '../signaldetail/signaldetail';
 
 interface MongoId {
@@ -20,7 +19,7 @@ interface MongoId {
   templateUrl: './signalgrid.html',
   styleUrl: './signalgrid.css'
 })
-export class Signalgrid { 
+export class Signalgrid implements AfterViewInit { 
   private apiService = inject(ApiService);
   private router = inject(Router);
   
@@ -76,5 +75,52 @@ export class Signalgrid {
   navigateToSignalDetail(signal: TradingSignal) {
     const signalId = signal._id || signal.symbol;
     this.router.navigate(['/signal-detail', signalId]);
+  }
+
+  ngAfterViewInit() {
+    this.loadTradingViewWidgets();
+  }
+  loadTradingViewWidgets() {
+    throw new Error('Method not implemented.');
+  }
+  private loadTradingViewScript() {
+    if (!document.querySelector('script[src*="tradingview.com"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+      script.async = true;
+      script.type = 'text/javascript';
+      script.onload = () => this.initWidgets();
+      document.head.appendChild(script);
+    } else {
+      this.initWidgets();
+    }
+  }
+
+  private initWidgets() {
+    this.signals$.subscribe(signals => {
+      setTimeout(() => {
+        signals.forEach(signal => {
+          const container = document.querySelector(`[data-widget-id="widget-${signal._id || signal.symbol}"]`);
+          if (container && typeof (window as any).TradingView !== 'undefined') {
+            new (window as any).TradingView.widget({
+              container_id: `widget-${signal._id || signal.symbol}`,
+              symbol: `FX:${signal.symbol}`,
+              width: "100%",
+              height: 220,
+              locale: "en",
+              dateRange: "12M",
+              colorTheme: "light",
+              isTransparent: false,
+              autosize: false,
+              largeChartUrl: ""
+            });
+          }
+        });
+      }, 500); // Small delay to ensure DOM is ready
+    });
+  }
+
+  getWidgetId(signal: TradingSignal): string {
+    return `widget-${signal.symbol}`;
   }
 }
