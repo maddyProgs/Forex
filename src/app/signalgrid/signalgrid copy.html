@@ -1,0 +1,221 @@
+<!-- <div class="signal-grid-container">
+  <div *ngIf="signals$ | async as signals">
+    <div *ngFor="let signal of signals" class="trading-dashboard">
+      <header class="dashboard-header">
+        <div class="asset-info">
+          <h1 class="asset-name">{{ signal.symbol }}</h1>
+          <span class="strategy-tag" [ngClass]="{
+            'intraday': signal.Forecast === '1-3 Days',
+            'swing': signal.Forecast === '3-5 Days'
+          }">
+            {{ signal.Forecast }}
+          </span>
+          <span class="strategy-tag" [ngClass]="{
+            'buy-water': signal.Primary_Trade_Strategy.includes('LONG'),
+            'sell-water': signal.Primary_Trade_Strategy.includes('SHORT')
+          }">
+            {{ signal.Primary_Trade_Strategy.includes('LONG') ? 'BUY LIMIT' : 'SELL LIMIT' }}
+          </span>
+        </div>
+        <div class="tradingview-container">
+        <app-tradingview-widget 
+          [symbol]="'FX:' + signal.symbol"
+          [width]="350"
+          [height]="220">
+        </app-tradingview-widget>
+      </div>
+        <div class="confidence-indicator">
+          <div class="confidence-value">{{ signal.trend_meter }}</div>
+          <div class="confidence-label">TREND METER</div>
+        </div>
+      </header>
+
+      <!-- <div class="chart-container">
+        <img [src]="signal.chart_url" [alt]="signal.symbol + ' chart'" class="chart-image">
+      </div> -->
+<!-- 
+      <div class="trading-details">
+        <div class="detail-card">
+          <div class="detail-label">PRICE</div>
+          <div class="detail-value">{{ signal.price }}</div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-label">ENTRY</div>
+          <div class="detail-value">{{ parseEntryPrice(signal.Primary_Trade_Strategy) }}</div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-label">TARGETS</div>
+          <div class="detail-value">{{ parseTargets(signal.Primary_Trade_Strategy) }}</div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-label">STOP</div>
+          <div class="detail-value">{{ parseStopLoss(signal.Primary_Trade_Strategy) }}</div>
+        </div>
+      </div>
+
+      <div class="support-resistance">
+        <div class="levels">
+          <h3>Support</h3>
+          <div class="level">{{ signal.support1 }}</div>
+          <div class="level">{{ signal.support2 }}</div>
+          <div class="level">{{ signal.support3 }}</div>
+        </div>
+        <div class="levels">
+          <h3>Resistance</h3>
+          <div class="level">{{ signal.resistance1 }}</div>
+          <div class="level">{{ signal.resistance2 }}</div>
+          <div class="level">{{ signal.resistance3 }}</div>
+        </div>
+      </div>
+
+      <div class="trend-analysis">
+        <h3>Trend Analysis</h3>
+        <p>{{ signal.trend }}</p>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn learn-more">
+          <fa-icon [icon]="faInfoCircle"></fa-icon> LEARN MORE
+        </button>
+      </div>
+
+      <div class="expiry-notice">
+        <fa-icon [icon]="faClock"></fa-icon> 
+        Generated on {{ signal.Date | date:'medium' }}
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+
+
+
+ <!-- new code for better visualisation -->
+<div class="signal-grid-container">
+  <div *ngIf="signals$ | async as signals">
+    <div *ngFor="let signal of signals" class="trading-dashboard">
+      <div class="trading-dashboard">
+        <header class="dashboard-header">
+            <div class="asset-info">
+                <h1 class="asset-name">{{ signal.symbol }}</h1>
+                <!-- <span class="strategy-tag">{{ signal.duration }}</span> -->
+ 
+                <!-- <span class="strategy-tag" [ngClass]="{
+            'intraday': signal.Forecast === '1-3 Days',
+            'swing': signal.Forecast === '3-5 Days'
+          }">
+            {{ signal.Forecast }}
+          </span> -->
+                <span class="strategy-tag ">{{ signal.type }}</span>
+                <span class="strategy-tag buy-water">{{ signal.duration }}</span>
+            </div>
+             <div class="trading-details">
+            <div class="detail-card">
+                <div class="detail-label">ENTRY</div>
+                <div class="detail-value">{{ signal.Entry }}</div>
+            </div>
+            
+            <div class="detail-card">
+                <div class="detail-label">TARGET</div>
+                <div class="detail-value">{{ signal.Target1 }}</div>
+            </div>
+            
+            <div class="detail-card">
+                <div class="detail-label">STOP</div>
+                <div class="detail-value">{{ signal.StopLoss }}</div>
+            </div>
+        </div>
+
+      <!-- <header class="dashboard-header">
+        <div class="asset-info">
+          <h1 class="asset-name">{{ signal.symbol }}</h1>
+          <span class="strategy-tag" [ngClass]="{
+            'intraday': signal.Forecast === '1-3 Days',
+            'swing': signal.Forecast === '3-5 Days'
+          }">
+            {{ signal.Forecast }}
+          </span>
+        </div>
+         -->
+<!-- 
+        <div class="price-display">
+          <div class="current-price">{{ signal.price }}</div>
+          <div class="price-change">+0.236 (0.00%)</div> <!-- You can make this dynamic -->
+        <!-- </div>
+      </header> -->
+     -->
+
+      <div class="tradingview-container">
+        <app-tradingview-widget 
+          [symbol]="'FX:' + signal.symbol"
+          [width]="350"
+          [height]="220">
+        </app-tradingview-widget>
+      </div>
+<!-- 
+      <div class="strategy-display">
+        <div class="strategy-tag" [ngClass]="{
+          'buy-water': signal.Primary_Trade_Strategy.includes('LONG'),
+          'sell-water': signal.Primary_Trade_Strategy.includes('SHORT')
+        }">
+          {{ signal.Primary_Trade_Strategy.includes('LONG') ? 'BUY LIMIT' : 'SELL LIMIT' }}
+        </div>
+        <p class="strategy-highlight">{{ signal.Primary_Trade_Strategy }}</p>
+      </div> -->
+<!-- 
+      <div class="support-resistance-grid">
+        <div class="level-card">
+          <h3>Entry</h3>
+          <div class="level-value">{{ parseEntryPrice(signal.Primary_Trade_Strategy) }}</div>
+        </div>
+        <div class="level-card">
+          <h3>Targets</h3>
+          <div class="level-value">{{ parseTargets(signal.Primary_Trade_Strategy) }}</div>
+        </div>
+        <div class="level-card">
+          <h3>Stop</h3>
+          <div class="level-value">{{ parseStopLoss(signal.Primary_Trade_Strategy) }}</div>
+        </div>
+        <div class="level-card">
+          <h3>Confidence</h3>
+          <div class="level-value">{{ signal.trend_meter }}/5</div>
+        </div>
+      </div> -->
+<!-- 
+      <div class="support-resistance-grid">
+        <div class="level-card">
+          <h3>Support</h3>
+          <div class="level-value">S1: {{ signal.support1 }}</div>
+          <div class="level-value">S2: {{ signal.support2 }}</div>
+          <div class="level-value">S3: {{ signal.support3 }}</div>
+        </div>
+        <div class="level-card">
+          <h3>Resistance</h3>
+          <div class="level-value">R1: {{ signal.resistance1 }}</div>
+          <div class="level-value">R2: {{ signal.resistance2 }}</div>
+          <div class="level-value">R3: {{ signal.resistance3 }}</div>
+        </div>
+      </div> -->
+<!-- 
+      <div class="trend-analysis-card">
+        <h3>Trend Analysis</h3>
+        <p>{{ signal.trend }}</p>
+      </div> -->
+
+      <div class="action-buttons">
+        <button class="btn learn-more">
+          <fa-icon [icon]="faInfoCircle"></fa-icon> LEARN MORE
+        </button>
+        <div class="time-display">
+          Generated on {{ signal.Date | date:'medium' }}
+        </div>
+      <!-- </div> -->
+    <!-- </div> -->
+  <!-- </div> -->
+</div>

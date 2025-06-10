@@ -1,0 +1,75 @@
+<div class="signal-detail-container" *ngIf="signal$ | async as signal">
+  <div class="detailed-dashboard">
+    <header class="dashboard-header">
+      <div class="asset-title">
+        <h1>{{ signal.symbol }}</h1>
+      </div>
+      <!-- <div class="price-info">
+                <div class="current-price">21214</div>
+                <div class="price-change">-109 (-0.51%)</div>
+            </div> -->
+    </header>
+
+    <!-- <div class="trading-metrics">
+      <div class="metric-card">
+        <div class="metric-value">{{ signal.Entry }}</div>
+        <div class="metric-label">Entry</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signal.Target1 }}</div>
+        <div class="metric-label">Target</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signal.Target2 }}</div>
+        <div class="metric-label">Target</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signal.StopLoss }}</div>
+        <div class="metric-label">Stop</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signal.duration }}</div>
+        <div class="metric-label">Duration</div>
+      </div>
+    </div> -->
+
+    <!-- <div class="chart-section">
+            <div class="chart-controls">
+            </div>
+            <div class="chart-container">
+                <img src="https://res.cloudinary.com/dejlkojff/image/upload/v1748324494/chart_2025052709/EURUSD.jpg" alt="US100 4H Chart" class="chart-image">
+            </div>
+        </div>
+           -->
+    <div class="trend-analysis">
+      <div class="section-title">{{ signal.trend }}</div>
+      <div class="trend-content">{{ signal.trend }}</div>
+    </div>
+  </div>
+
+  <!-- <div class="economic-events">
+            <div class="section-title">Economic Events</div>
+            <div class="events-container" id="eventsContainer">
+                
+                <div class="event-card">
+                    <div class="event-time">22:00 <span class="event-country">AU</span></div>
+                    <div class="event-name">Markit Manufacturing PMI Final DEC</div>
+                    <div class="event-data">
+                        <div class="data-row">
+                            <span>Actual</span>
+                            <span class="actual-value">55.7</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Forecast</span>
+                            <span class="forecast-value">56</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Previous</span>
+                            <span class="previous-value">55.8</span>
+                        </div>
+                    </div>
+                    <div class="event-impact medium">MEDIUM</div>
+                </div>
+            </div>
+        </div> -->
+</div>

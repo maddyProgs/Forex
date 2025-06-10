@@ -1,0 +1,31 @@
+<div class="signal-detail-container" *ngIf="signal$ | async as signal">
+ <div class="header">
+    <h1>{{ signal.symbol }} Signal Details</h1>
+    <button routerLink="/signals" class="btn back-btn">Back to Signals</button>
+  </div>
+
+  <div class="signal-content">
+    <div class="chart-container">
+      <img [src]="signal.chart_url" [alt]="signal.symbol + ' chart'">
+    </div>
+
+
+  
+
+    <div class="signal-info">
+      <div class="info-section">
+        <h2>Trade Strategy</h2>
+        <p><strong>Primary:</strong> {{ signal.Primary_Trade_Strategy }}</p>
+        <p><strong>Secondary:</strong> {{ signal.Secondary_Trade_Strategy || 'N/A' }}</p>
+      </div>
+
+      <div class="info-section">
+        <h2>Price Analysis</h2>
+        <p><strong>Current Price:</strong> {{ signal.price }}</p>
+        <p><strong>Trend:</strong> {{ signal.trend }}</p>
+      </div>
+
+      <!-- Add more details as needed -->
+    </div>
+  </div>
+</div>

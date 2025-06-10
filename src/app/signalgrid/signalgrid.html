@@ -1,0 +1,36 @@
+<div *ngIf="signals$ | async as signals" class="signals-grid">
+  <div *ngFor="let signal of signals" class="signal-card">
+    <header class="dashboard-header">
+      <div class="asset-info">
+        <h1 class="asset-name">{{ signal.symbol }}</h1>
+        <span class="strategy-tag intraday">{{ signal.duration }}</span>
+        <span class="strategy-tag buy-water">{{ signal.type }}</span>
+      </div>
+    </header>
+
+    <div class="trading-details">
+      <div class="detail-card">
+        <div class="detail-label">ENTRY</div>
+        <div class="detail-value">{{ signal.Entry }}</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-label">TARGET</div>
+        <div class="detail-value">{{ signal.Target1 }}</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-label">STOP</div>
+        <div class="detail-value">{{ signal.StopLoss }}</div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn learn-more" (click)="navigateToSignalDetail(signal)">
+        <i class="fas fa-info-circle"></i> LEARN MORE 
+      </button>
+    </div>
+
+    
+  </div>
+</div>

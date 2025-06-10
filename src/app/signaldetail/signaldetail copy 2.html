@@ -1,0 +1,58 @@
+<div class="signal-detail-container">
+  <!-- Error message display -->
+  <div *ngIf="loadingError" class="error-message">
+    Error: {{ loadingError }}
+  </div>
+
+  <!-- Debug output -->
+  <pre *ngIf="signalData" style="background: #f5f5f5; padding: 10px; margin: 10px 0;">
+    {{ signalData | json }}
+  </pre>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-message">
+    Loading signal data...
+  </div>
+
+  <!-- Main content when loaded -->
+  <div *ngIf="signalData && !isLoading" class="detailed-dashboard">
+    <header class="dashboard-header">
+      <div class="asset-title">
+        <h1>{{ signalData.symbol || 'N/A' }}</h1>
+      </div>
+    </header>
+
+    <div class="trading-metrics">
+      <div class="metric-card">
+        <div class="metric-value">{{ signalData.entry || 'N/A' }}</div>
+        <div class="metric-label">Entry</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signalData.target1 || 'N/A' }}</div>
+        <div class="metric-label">Target 1</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signalData.target2 || 'N/A' }}</div>
+        <div class="metric-label">Target 2</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signalData.stopLoss || 'N/A' }}</div>
+        <div class="metric-label">Stop</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">{{ signalData.duration || 'Intraday' }}</div>
+        <div class="metric-label">Duration</div>
+      </div>
+    </div>
+
+    <div class="trend-analysis">
+      <div class="section-title">Trend Analysis</div>
+      <div class="trend-content">{{ signalData.trend || 'No trend analysis available' }}</div>
+    </div>
+  </div>
+
+  <!-- Empty state when no data -->
+  <!-- <div *ngIf="!signalData && !isLoading && !loadingError" class="no-data-message">
+    No signal data available
+  </div> -->
+</div>
