@@ -35,10 +35,20 @@ export class Signaldetail implements OnInit {
       return;
     }
 
-    this.signal$ = this.apiService.get<TradingSignal>(`get-signal/${id}`).pipe(
+    this.signal$ = this.apiService.get<any>(`get-signal/${id}`).pipe(
       tap(data => {
-        console.log('Received data:', data); // Debug log
-        this.rawData = data; // Store for template debugging
+        // If data is a string, parse it
+        if (typeof data === 'string') {
+          data = JSON.parse(data);
+        }
+        data.type = data.Type || data.type;
+        data.Entry = data.Entry || data.entry;
+        data.Target1 = data.Target1 || data.target1;
+        data.Target2 = data.Target2 || data.target2;
+        data.StopLoss = data.StopLoss || data.stopLoss;
+        // ...map other fields as needed
+
+        this.rawData = data;
       }),
       catchError(error => {
         console.error('Error loading signal:', error);

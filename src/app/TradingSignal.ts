@@ -20,9 +20,18 @@ export interface TradingSignal {
   _id?: string | { $oid: string };
   duration: string;
   type: string;
-  Entry:string;
-  Target1:string;
-  Target2:string;
-  StopLoss:string;
+  Entry: string;
+  Target1: string;
+  Target2: string;
+  StopLoss: string;
+  events?: Array<{
+    time: string;
+    country: string;
+    name: string;
+    actual: string;
+    forecast: string;
+    previous: string;
+    impact: string;
+  }>;
 
 }

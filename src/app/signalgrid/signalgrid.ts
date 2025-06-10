@@ -81,7 +81,7 @@ export class Signalgrid implements AfterViewInit {
     this.loadTradingViewWidgets();
   }
   loadTradingViewWidgets() {
-    throw new Error('Method not implemented.');
+    this.loadTradingViewScript();
   }
   private loadTradingViewScript() {
     if (!document.querySelector('script[src*="tradingview.com"]')) {
@@ -98,28 +98,58 @@ export class Signalgrid implements AfterViewInit {
   }
 
   private initWidgets() {
-  this.signals$.subscribe(signals => {
-    // Wait for both the script and DOM to be ready
-    const checkReady = () => {
-      if (typeof (window as any).TradingView !== 'undefined') {
-        signals.forEach(signal => {
-          const widgetId = this.getWidgetId(signal);
-          const container = document.getElementById(widgetId);
-          
-          if (container && !container.hasChildNodes()) {
-            new (window as any).TradingView.widget({
-              // ... widget config ...
-            });
-          }
-        });
-      } else {
-        setTimeout(checkReady, 100);
-      }
-    };
-    checkReady();
-  });
-}
+    this.signals$.subscribe(signals => {
+      signals.forEach(signal => {
+        const widgetId = this.getWidgetId(signal);
+        const container = document.getElementById(widgetId);
+
+        if (container) {
+          container.innerHTML = ''; // Clear previous widget if any
+
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+          script.async = true;
+          script.innerHTML = `
+          {
+            "autosize": true,
+            "symbol": "${this.mapToTradingViewSymbol(signal.symbol || "EURUSD")}",
+            "interval": "4H",
+            "timezone": "Etc/UTC",
+            "theme": "light",
+            "style": "1",
+            "locale": "en",
+            "allow_symbol_change": false,
+            "hide_top_toolbar": true,
+            "hide_legend": true,
+            "hide_side_toolbar": true,
+            "withdateranges": false,
+            "support_host": "https://www.tradingview.com"
+          }`;
+          container.appendChild(script);
+        }
+      });
+    });
+  }
   getWidgetId(signal: TradingSignal): string {
     return `tradingview-widget-${signal._id || signal.symbol}`;
+  }
+
+  private mapToTradingViewSymbol(symbol: string): string {
+    const symbolMap: { [key: string]: string } = {
+      EURUSD: 'FX:EURUSD',
+      GBPUSD: 'FX:GBPUSD',
+      AUDUSD: 'FX:AUDUSD',
+      NZDUSD: 'FX:NZDUSD',
+      USDCHF: 'FX:USDCHF',
+      USDJPY: 'FX:USDJPY',
+      USDCAD: 'FX:USDCAD',
+      XAUUSD: 'OANDA:XAUUSD',
+      XAGUSD: 'OANDA:XAGUSD',
+      WTI_OIL: 'TVC:USOIL',
+      DJ30: 'TVC:DJI',
+      UK100: 'TVC:UKX'
+    };
+    return symbolMap[symbol] || symbol;
   }
 }
