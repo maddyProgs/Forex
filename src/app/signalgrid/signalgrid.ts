@@ -92,35 +92,34 @@ export class Signalgrid implements AfterViewInit {
       script.onload = () => this.initWidgets();
       document.head.appendChild(script);
     } else {
+      // Script already loaded, initialize widgets
       this.initWidgets();
     }
   }
 
   private initWidgets() {
-    this.signals$.subscribe(signals => {
-      setTimeout(() => {
+  this.signals$.subscribe(signals => {
+    // Wait for both the script and DOM to be ready
+    const checkReady = () => {
+      if (typeof (window as any).TradingView !== 'undefined') {
         signals.forEach(signal => {
-          const container = document.querySelector(`[data-widget-id="widget-${signal._id || signal.symbol}"]`);
-          if (container && typeof (window as any).TradingView !== 'undefined') {
+          const widgetId = this.getWidgetId(signal);
+          const container = document.getElementById(widgetId);
+          
+          if (container && !container.hasChildNodes()) {
             new (window as any).TradingView.widget({
-              container_id: `widget-${signal._id || signal.symbol}`,
-              symbol: `FX:${signal.symbol}`,
-              width: "100%",
-              height: 220,
-              locale: "en",
-              dateRange: "12M",
-              colorTheme: "light",
-              isTransparent: false,
-              autosize: false,
-              largeChartUrl: ""
+              // ... widget config ...
             });
           }
         });
-      }, 500); // Small delay to ensure DOM is ready
-    });
-  }
-
+      } else {
+        setTimeout(checkReady, 100);
+      }
+    };
+    checkReady();
+  });
+}
   getWidgetId(signal: TradingSignal): string {
-    return `widget-${signal.symbol}`;
+    return `tradingview-widget-${signal._id || signal.symbol}`;
   }
 }
