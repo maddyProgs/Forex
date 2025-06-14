@@ -40,7 +40,7 @@
       <div class="trend-content">{{ signal.trend }}</div>
     </div>
 
-    <div class="economic-events" *ngIf="signal.events?.length">
+    <!-- <div class="economic-events" *ngIf="signal.events?.length">
       <div class="section-title">Economic Events</div>
       <div class="events-container">
         <div class="event-card" *ngFor="let event of signal.events">
@@ -65,17 +65,44 @@
           <div class="event-impact" [ngClass]="event.impact.toLowerCase()">{{ event.impact }}</div>
         </div>
       </div>
+    </div> -->
+
+    <!-- Support/Resistance Table -->
+    <div class="support-resistance-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Support Levels</th>
+            <th>Resistance Levels</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>S1: {{ signal.support1 }}</td>
+            <td>R1: {{ signal.resistance1 }}</td>
+          </tr>
+          <tr>
+            <td>S2: {{ signal.support2 }}</td>
+            <td>R2: {{ signal.resistance2 }}</td>
+          </tr>
+          <tr>
+            <td>S3: {{ signal.support3 }}</td>
+            <td>R3: {{ signal.resistance3 }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <button class="btn back-btn" (click)="goBack()">
       <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
     </button>
 
-    <!-- Debug output -->
+    <!-- Debug output
     <pre>{{ signal | json }}</pre>
   </div>
-</div>
+</div> -->
 
-<div *ngIf="loadingError" class="error-message">
-  {{ loadingError }}
+  <div *ngIf="loadingError" class="error-message">
+    {{ loadingError }}
+  </div>
 </div>

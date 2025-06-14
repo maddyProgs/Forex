@@ -66,6 +66,6 @@ export class Signaldetail implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/signalgrid']);
   }
 }

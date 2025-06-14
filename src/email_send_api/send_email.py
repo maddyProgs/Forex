@@ -1,0 +1,229 @@
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+# Your SMTP credentials
+SMTP_SERVER = 'smtp.gmail.com'
+SMTP_PORT = 587
+EMAIL_ADDRESS = 'madhavendraSfinnovic@gmail.com'       # Your Gmail
+EMAIL_PASSWORD = 'ymwm zpus rnor qbio'        # Use App Password, NOT your real password
+
+# Recipient
+to_email = 'ms2660123@gmail.com'
+
+# Create the email message
+message = MIMEMultipart("alternative")
+message['Subject'] = "Test HTML Email"
+message['From'] = EMAIL_ADDRESS
+message['To'] = to_email
+
+# HTML content
+html_content = """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Signal Alert</title>
+    <style type="text/css">
+        /* Inline CSS for email compatibility */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .signal-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .signal-header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .signal-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .current-time {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: #e0e0e0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .metric-card {
+            background: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666666;
+            text-transform: uppercase;
+        }
+        .strategy-tag {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #16a34a;
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin: 15px 0;
+        }
+        .chart-section img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .trend-analysis {
+            background: #f8f9fa;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .section-title {
+            color: #2563eb;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .support-resistance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #1e40af;
+            color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .support-resistance-table th {
+            background: #0025f5;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .support-resistance-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #2563eb;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999999;
+            text-align: center;
+        }
+        @media screen and (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signal-container">
+        <div class="signal-header">
+            <h1>{{ signal.symbol }}</h1>
+            <div class="current-time">{{ currentTime }} UTC</div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">{{ signal.Entry }}</div>
+                <div class="metric-label">Entry</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ signal.Target1 }}</div>
+                <div class="metric-label">Target</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ signal.StopLoss }}</div>
+                <div class="metric-label">Stop</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ signal.duration }}</div>
+                <div class="metric-label">Duration</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div class="strategy-tag">{{ signal.type }}</div>
+        </div>
+        
+        <div class="chart-section">
+            <img src="{{ signal.chart_url }}" alt="Trading Chart">
+        </div>
+        
+        <div class="trend-analysis">
+            <div class="section-title">Trend Analysis</div>
+            <div>{{ signal.trend }}</div>
+        </div>
+        
+        <table class="support-resistance-table">
+            <thead>
+                <tr>
+                    <th>Support Levels</th>
+                    <th>Resistance Levels</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>S1: {{ signal.support1 }}</td>
+                    <td>R1: {{ signal.resistance1 }}</td>
+                </tr>
+                <tr>
+                    <td>S2: {{ signal.support2 }}</td>
+                    <td>R2: {{ signal.resistance2 }}</td>
+                </tr>
+                <tr>
+                    <td>S3: {{ signal.support3 }}</td>
+                    <td>R3: {{ signal.resistance3 }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="footer">
+        This email was sent to you as a subscriber of our trading signals service.
+        <br>
+        To unsubscribe, click here.
+    </div>
+</body>
+</html>
+"""
+
+# Attach HTML to the message
+html_part = MIMEText(html_content, "html")
+message.attach(html_part)
+
+# Send the email
+try:
+    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+    server.starttls()
+    server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+    server.sendmail(EMAIL_ADDRESS, to_email, message.as_string())
+    server.quit()
+    print("✅ Email sent successfully!")
+except Exception as e:
+    print("❌ Error sending email:", str(e))
