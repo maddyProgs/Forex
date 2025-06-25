@@ -10,7 +10,7 @@ from bson.json_util import dumps
 from bson import ObjectId, json_util
 from bson.errors import InvalidId
 app = FastAPI()
-
+import os
 origins = [
     "http://localhost",
     "http://localhost:3000"
@@ -34,7 +34,7 @@ app.add_middleware(
 )
 """
 # MongoDB configuration
-MONGO_URI = "mongodb://localhost:27017/"
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 DB_NAME = "SIGNALSDB"
 COLLECTION_NAME = "signals"
 
