@@ -15,7 +15,7 @@ interface MongoId {
 @Component({
   selector: 'app-signalgrid',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule,],
   templateUrl: './signalgrid.html',
   styleUrl: './signalgrid.css'
 })

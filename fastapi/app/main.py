@@ -13,7 +13,7 @@ app = FastAPI()
 import os
 origins = [
     "http://localhost",
-    "http://localhost:3000"
+    "http://localhost:3000","https://currencychronicle.in/"
     ,
 ]
 app.add_middleware(
