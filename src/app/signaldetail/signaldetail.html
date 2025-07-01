@@ -1,12 +1,15 @@
-<!-- signaldetail.html -->
 <div class="signal-detail-container" *ngIf="signal$ | async as signal">
-  <div class="detailed-dashboard">
-    <header class="dashboard-header">
-      <div class="asset-title">
-        <h1>{{ signal.symbol }}</h1>
-        <div class="current-time">{{ currentTime }} UTC</div>
+  <div class="trading-dashboard detailed-dashboard">
+    <div class="dashboard-header">
+      <div class="asset-info">
+        <div class="asset-title">
+          <h1>{{ signal.symbol }}</h1>
+        </div>
+        <div class="price-info">
+          <div class="current-price">{{ currentTime }} UTC</div>
+        </div>
       </div>
-    </header>
+    </div>
 
     <div class="trading-metrics">
       <div class="metric-card">
@@ -32,7 +35,9 @@
     </div>
 
     <div class="chart-section">
-      <img [src]="signal.chart_url" alt="Chart" class="chart-image">
+      <div class="chart-container">
+        <img [src]="signal.chart_url" alt="Chart" class="chart-image">
+      </div>
     </div>
 
     <div class="trend-analysis" *ngIf="signal.trend">
@@ -40,69 +45,33 @@
       <div class="trend-content">{{ signal.trend }}</div>
     </div>
 
-    <!-- <div class="economic-events" *ngIf="signal.events?.length">
-      <div class="section-title">Economic Events</div>
-      <div class="events-container">
-        <div class="event-card" *ngFor="let event of signal.events">
-          <div class="event-time">
-            {{ event.time }} <span class="event-country">{{ event.country }}</span>
-          </div>
-          <div class="event-name">{{ event.name }}</div>
-          <div class="event-data">
-            <div class="data-row">
-              <span>Actual</span>
-              <span class="actual-value">{{ event.actual }}</span>
-            </div>
-            <div class="data-row">
-              <span>Forecast</span>
-              <span class="forecast-value">{{ event.forecast }}</span>
-            </div>
-            <div class="data-row">
-              <span>Previous</span>
-              <span class="previous-value">{{ event.previous }}</span>
-            </div>
-          </div>
-          <div class="event-impact" [ngClass]="event.impact.toLowerCase()">{{ event.impact }}</div>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- Support/Resistance Table -->
     <div class="support-resistance-table">
       <table>
-        <thead>
-          <tr>
-            <th>Support Levels</th>
-            <th>Resistance Levels</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>S1: {{ signal.support1 }}</td>
-            <td>R1: {{ signal.resistance1 }}</td>
-          </tr>
-          <tr>
-            <td>S2: {{ signal.support2 }}</td>
-            <td>R2: {{ signal.resistance2 }}</td>
-          </tr>
-          <tr>
-            <td>S3: {{ signal.support3 }}</td>
-            <td>R3: {{ signal.resistance3 }}</td>
-          </tr>
-        </tbody>
+        <tr>
+          <th>Support Levels</th>
+          <th>Resistance Levels</th>
+        </tr>
+        <tr>
+          <td>S1: {{ signal.support1 }}</td>
+          <td>R1: {{ signal.resistance1 }}</td>
+        </tr>
+        <tr>
+          <td>S2: {{ signal.support2 }}</td>
+          <td>R2: {{ signal.resistance2 }}</td>
+        </tr>
+        <tr>
+          <td>S3: {{ signal.support3 }}</td>
+          <td>R3: {{ signal.resistance3 }}</td>
+        </tr>
       </table>
     </div>
 
-    <button class="btn back-btn" (click)="goBack()">
+    <button class="btn back-btn" (click)="onGoBack()">
       <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
     </button>
-
-    <!-- Debug output
-    <pre>{{ signal | json }}</pre>
   </div>
-</div> -->
+</div>
 
-  <div *ngIf="loadingError" class="error-message">
-    {{ loadingError }}
-  </div>
+<div *ngIf="loadingError" class="error-message">
+  {{ loadingError }}
 </div>

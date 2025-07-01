@@ -1,10 +1,18 @@
-import { Component, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { ApiService } from '../service/httpservice';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  AfterViewInit,
+  ViewEncapsulation
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { faInfoCircle, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { map, Observable } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Router } from '@angular/router';
+import { faInfoCircle, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ApiService } from '../service/httpservice';
 import { TradingSignal } from '../TradingSignal';
 import { Signaldetail } from '../signaldetail/signaldetail';
 
@@ -13,76 +21,59 @@ interface MongoId {
 }
 
 @Component({
-  selector: 'app-signalgrid',
+  selector: 'app-signal-grid',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule,],
+  imports: [CommonModule, FontAwesomeModule, Signaldetail],
   templateUrl: './signalgrid.html',
-  styleUrl: './signalgrid.css'
+  styleUrls: ['./signalgrid.css'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
-export class Signalgrid implements AfterViewInit { 
-  private apiService = inject(ApiService);
-  private router = inject(Router);
-  
-  signals$: Observable<TradingSignal[]>;
-  
-  // Font Awesome icons
+export class SignalGridComponent implements OnInit, AfterViewInit {
+  @Input() clientId: string = '';
+  @Output() viewDetail = new EventEmitter<string>();
+
+  signals$: Observable<TradingSignal[]> = of([]);
+  selectedSignal: TradingSignal | null = null;
+
   faInfoCircle = faInfoCircle;
   faClock = faClock;
   faArrowLeft = faArrowLeft;
 
-  activeSignal: TradingSignal | null = null;
+  constructor(private apiService: ApiService) {}
 
-  constructor() {
-    this.signals$ = this.apiService.get<{ signals: string }>('get-signals')
-      .pipe(
-        map(response => {
-          try {
-            const parsedSignals = JSON.parse(response.signals) as TradingSignal[];
-            // Ensure _id is properly formatted
-            return parsedSignals.map(signal => ({
-              ...signal,
-              _id: this.normalizeId(signal._id)
-            }));
-          } catch (e) {
-            console.error('Error parsing signals:', e);
-            return [];
-          }
-        })
-      );
+  ngOnInit(): void {
+    if (!this.clientId) return;
+
+    this.signals$ = this.apiService.get<{ signals: string }>(`get-signals?client_id=${this.clientId}`).pipe(
+      map(response => {
+        try {
+          const parsedSignals = JSON.parse(response.signals) as TradingSignal[];
+          return parsedSignals.map(signal => ({
+            ...signal,
+            _id: this.normalizeId(signal._id)
+          }));
+        } catch (e) {
+          console.error('Error parsing signals:', e);
+          return [];
+        }
+      })
+    );
+  }
+
+  ngAfterViewInit(): void {
+    this.loadTradingViewScript();
   }
 
   private normalizeId(id: string | MongoId | undefined): string {
     if (!id) return '';
     if (typeof id === 'string') return id;
-    return id.$oid; // Now TypeScript knows this is a MongoId object
+    return id.$oid;
   }
 
-  parseEntryPrice(strategy: string): string {
-    const match = strategy.match(/price ([\d.]+) range/);
-    return match ? match[1] : 'N/A';
+  getWidgetId(signal: TradingSignal): string {
+    return `tradingview-widget-${signal._id || signal.symbol}`;
   }
 
-  parseTargets(strategy: string): string {
-    const matches = strategy.match(/targets at ([\d.]+) and ([\d.]+)/);
-    return matches ? `${matches[1]} / ${matches[2]}` : 'N/A';
-  }
-
-  parseStopLoss(strategy: string): string {
-    const match = strategy.match(/stop-loss at ([\d.]+)/);
-    return match ? match[1] : 'N/A';
-  }
-  
-  navigateToSignalDetail(signal: TradingSignal) {
-    const signalId = signal._id || signal.symbol;
-    this.router.navigate(['/signal-detail', signalId]);
-  }
-
-  ngAfterViewInit() {
-    this.loadTradingViewWidgets();
-  }
-  loadTradingViewWidgets() {
-    this.loadTradingViewScript();
-  }
   private loadTradingViewScript() {
     if (!document.querySelector('script[src*="tradingview.com"]')) {
       const script = document.createElement('script');
@@ -92,7 +83,6 @@ export class Signalgrid implements AfterViewInit {
       script.onload = () => this.initWidgets();
       document.head.appendChild(script);
     } else {
-      // Script already loaded, initialize widgets
       this.initWidgets();
     }
   }
@@ -104,7 +94,7 @@ export class Signalgrid implements AfterViewInit {
         const container = document.getElementById(widgetId);
 
         if (container) {
-          container.innerHTML = ''; // Clear previous widget if any
+          container.innerHTML = '';
 
           const script = document.createElement('script');
           script.type = 'text/javascript';
@@ -113,7 +103,7 @@ export class Signalgrid implements AfterViewInit {
           script.innerHTML = `
           {
             "autosize": true,
-            "symbol": "${this.mapToTradingViewSymbol(signal.symbol || "EURUSD")}",
+            "symbol": "${this.mapToTradingViewSymbol(signal.symbol || 'EURUSD')}",
             "interval": "4H",
             "timezone": "Etc/UTC",
             "theme": "light",
@@ -130,9 +120,6 @@ export class Signalgrid implements AfterViewInit {
         }
       });
     });
-  }
-  getWidgetId(signal: TradingSignal): string {
-    return `tradingview-widget-${signal._id || signal.symbol}`;
   }
 
   private mapToTradingViewSymbol(symbol: string): string {
@@ -151,5 +138,14 @@ export class Signalgrid implements AfterViewInit {
       UK100: 'TVC:UKX'
     };
     return symbolMap[symbol] || symbol;
+  }
+
+  navigateToSignalDetail(signal: TradingSignal) {
+    this.selectedSignal = signal;
+    this.viewDetail.emit(this.normalizeId(signal._id) || signal.symbol);
+  }
+
+  goBack() {
+    this.selectedSignal = null;
   }
 }
