@@ -35,12 +35,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1mb", // Increase from 500kb
-                  "maximumError": "1.5mb" // Increase from 1mb
+                  "maximumWarning": "1mb",
+                  "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kb", // For individual component CSS
+                  "maximumWarning": "10kb",
                   "maximumError": "15kb"
                 }
               ],
@@ -53,6 +53,25 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "build-widget": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main-widget.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "outputPath": "dist/widget",
+            "assets": [],
+            "styles": [],
+            "scripts": [],
+            "optimization": true,
+            "extractLicenses": false,
+            "sourceMap": false,
+            "namedChunks": false,
+            "aot": true,
+            "vendorChunk": false,
+            "buildOptimizer": true
+          }
         },
         "serve": {
           "builder": "@angular/build:dev-server",

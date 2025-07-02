@@ -5,8 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build-widget": "ng build --configuration=build-widget",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "serve-widget": "ng serve --configuration=development --port=4201"
   },
   "private": true,
   "dependencies": {
