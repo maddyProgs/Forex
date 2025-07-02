@@ -70,7 +70,8 @@
             "namedChunks": false,
             "aot": true,
             "vendorChunk": false,
-            "buildOptimizer": true
+            "buildOptimizer": true,
+            "outputHashing": "none"
           }
         },
         "serve": {
@@ -84,6 +85,13 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "serve-widget": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "Forex:build-widget",
+            "port": 4201
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"

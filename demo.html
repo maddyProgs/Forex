@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Widget Demo - Local Testing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 10px 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .demo-title {
+            color: #2563eb;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .widget-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .status.loading {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        
+        .instructions {
+            background: #fffbeb;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            color: #92400e;
+            margin-top: 0;
+        }
+        
+        .step {
+            margin: 10px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #fde68a;
+        }
+        
+        .step:last-child {
+            border-bottom: none;
+        }
+        
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #1e40af;
+        }
+        
+        .btn.secondary {
+            background: #6b7280;
+        }
+        
+        .btn.secondary:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Trading Widget Demo</h1>
+            <p>Local Development & Testing Environment</p>
+        </div>
+        
+        <div class="content">
+            <div class="instructions">
+                <h3>📋 Quick Start Instructions</h3>
+                <div class="step">
+                    <strong>1. Build the widget:</strong> Run <code>npm run build-widget</code>
+                </div>
+                <div class="step">
+                    <strong>2. Start the demo server:</strong> Run <code>npm run serve-demo</code>
+                </div>
+                <div class="step">
+                    <strong>3. Test the widget:</strong> Visit <code>http://localhost:3000</code>
+                </div>
+                <div class="step">
+                    <strong>4. Widget files:</strong> Available at <code>http://localhost:3000/widget/</code>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h2 class="demo-title">🎯 Widget Status Check</h2>
+                <div id="widget-status" class="status loading">
+                    🔄 Checking widget availability...
+                </div>
+                <button class="btn" onclick="checkWidgetStatus()">🔄 Refresh Status</button>
+                <button class="btn secondary" onclick="loadWidget()">🚀 Load Widget</button>
+            </div>
+            
+            <div class="demo-section">
+                <h2 class="demo-title">📦 Basic Widget Implementation</h2>
+                <p>This is how clients will embed your widget:</p>
+                
+                <div class="code-block">
+&lt;!-- Include the widget script --&gt;<br>
+&lt;script src="http://localhost:3000/widget/main.js"&gt;&lt;/script&gt;<br><br>
+&lt;!-- Add the widget element --&gt;<br>
+&lt;trading-widget client-id="demo-client"&gt;&lt;/trading-widget&gt;
+                </div>
+                
+                <div class="widget-container">
+                    <div id="widget-demo">
+                        <div class="status loading">
+                            🔄 Widget will load here...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h2 class="demo-title">🛠️ Development Commands</h2>
+                <div class="code-block">
+# Build the widget<br>
+npm run build-widget<br><br>
+# Start demo server<br>
+npm run serve-demo<br><br>
+# Build and serve in one command<br>
+npm run build-and-serve<br><br>
+# Serve widget in development mode<br>
+npm run serve-widget
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h2 class="demo-title">🌐 Production Deployment</h2>
+                <p>For production deployment:</p>
+                <div class="code-block">
+1. Build the widget: npm run build-widget<br>
+2. Upload dist/widget/ contents to your CDN/server<br>
+3. Update script src to your production URL<br>
+4. Clients use: &lt;script src="https://your-domain.com/widget/main.js"&gt;&lt;/script&gt;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let widgetLoaded = false;
+        
+        function checkWidgetStatus() {
+            const statusEl = document.getElementById('widget-status');
+            statusEl.className = 'status loading';
+            statusEl.innerHTML = '🔄 Checking widget files...';
+            
+            fetch('/widget/main.js')
+                .then(response => {
+                    if (response.ok) {
+                        statusEl.className = 'status success';
+                        statusEl.innerHTML = '✅ Widget files are available and ready!';
+                    } else {
+                        throw new Error('Widget files not found');
+                    }
+                })
+                .catch(error => {
+                    statusEl.className = 'status error';
+                    statusEl.innerHTML = '❌ Widget files not found. Please run: npm run build-widget';
+                });
+        }
+        
+        function loadWidget() {
+            if (widgetLoaded) {
+                document.getElementById('widget-demo').innerHTML = '<trading-widget client-id="demo-client"></trading-widget>';
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = '/widget/main.js';
+            script.onload = function() {
+                widgetLoaded = true;
+                document.getElementById('widget-demo').innerHTML = '<trading-widget client-id="demo-client"></trading-widget>';
+                console.log('✅ Widget loaded successfully');
+            };
+            script.onerror = function() {
+                document.getElementById('widget-demo').innerHTML = 
+                    '<div class="status error">❌ Failed to load widget. Make sure to build it first!</div>';
+                console.error('❌ Failed to load widget');
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Auto-check status on page load
+        window.addEventListener('load', checkWidgetStatus);
+    </script>
+</body>
+</html>
