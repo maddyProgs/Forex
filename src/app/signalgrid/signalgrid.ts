@@ -61,7 +61,7 @@ export class SignalGridComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.loadTradingViewScript();
+    this.initWidgets();
   }
 
   private normalizeId(id: string | MongoId | undefined): string {
@@ -72,19 +72,6 @@ export class SignalGridComponent implements OnInit, AfterViewInit {
 
   getWidgetId(signal: TradingSignal): string {
     return `tradingview-widget-${signal._id || signal.symbol}`;
-  }
-
-  private loadTradingViewScript() {
-    if (!document.querySelector('script[src*="tradingview.com"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-      script.async = true;
-      script.type = 'text/javascript';
-      script.onload = () => this.initWidgets();
-      document.head.appendChild(script);
-    } else {
-      this.initWidgets();
-    }
   }
 
   private initWidgets() {
