@@ -1,3 +1,4 @@
+//singalgrid.ts
 import { Component, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ApiService } from '../service/httpservice';
 import { CommonModule } from '@angular/common';
