@@ -1,3 +1,4 @@
+//signalgrid.ts
 import {
   Component,
   Input,
