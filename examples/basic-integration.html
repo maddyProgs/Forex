@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Signals Widget - Basic Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .widget-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .widget-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .config-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+        .detail-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Forex Signals Widget Integration</h1>
+        
+        <div class="config-info">
+            <strong>Configuration:</strong><br>
+            API URL: <span id="api-url">http://localhost:8000</span><br>
+            Max Signals: <span id="max-signals">12</span><br>
+            Theme: <span id="theme">light</span>
+        </div>
+
+        <!-- Signal Grid Widget -->
+        <div class="widget-container">
+            <div class="widget-title">📊 Signal Grid Widget</div>
+            <forex-signal-grid 
+                id="signal-grid"
+                api-url="http://localhost:8000"
+                max-signals="12"
+                theme="light"
+                show-trading-view="true">
+            </forex-signal-grid>
+        </div>
+
+        <!-- Signal Detail Widget (initially hidden) -->
+        <div class="widget-container detail-container hidden" id="detail-container">
+            <div class="widget-title">📈 Signal Detail Widget</div>
+            <button onclick="hideDetail()" style="float: right; padding: 5px 10px;">✕ Close</button>
+            <forex-signal-detail 
+                id="signal-detail"
+                api-url="http://localhost:8000"
+                theme="light">
+            </forex-signal-detail>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Set this before loading the widget
+        window.ForexWidgetConfig = {
+            apiUrl: 'http://localhost:8000',
+            maxSignals: 12,
+            showTradingView: true,
+            theme: 'light'
+        };
+
+        // Event handlers for widget communication
+        document.addEventListener('DOMContentLoaded', function() {
+            const signalGrid = document.getElementById('signal-grid');
+            const signalDetail = document.getElementById('signal-detail');
+            const detailContainer = document.getElementById('detail-container');
+
+            // Listen for signal selection from grid
+            signalGrid.addEventListener('signalSelected', function(event) {
+                const signal = event.detail;
+                console.log('Signal selected:', signal);
+                
+                // Show detail widget with selected signal
+                signalDetail.setAttribute('signal-id', signal._id || signal.symbol);
+                detailContainer.classList.remove('hidden');
+                
+                // Scroll to detail view
+                detailContainer.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Listen for errors
+            signalGrid.addEventListener('signalError', function(event) {
+                console.error('Signal Grid Error:', event.detail);
+                alert('Error loading signals: ' + event.detail);
+            });
+
+            signalDetail.addEventListener('signalError', function(event) {
+                console.error('Signal Detail Error:', event.detail);
+                alert('Error loading signal details: ' + event.detail);
+            });
+
+            // Listen for back button in detail view
+            signalDetail.addEventListener('backClicked', function() {
+                hideDetail();
+            });
+        });
+
+        function hideDetail() {
+            document.getElementById('detail-container').classList.add('hidden');
+        }
+
+        // Update config display
+        function updateConfigDisplay() {
+            const config = window.ForexWidgetConfig || {};
+            document.getElementById('api-url').textContent = config.apiUrl || 'Not set';
+            document.getElementById('max-signals').textContent = config.maxSignals || 'Not set';
+            document.getElementById('theme').textContent = config.theme || 'Not set';
+        }
+
+        updateConfigDisplay();
+    </script>
+
+    <!-- Load the Forex Signals Web Components -->
+    <script src="../dist/web-component/loader.js"></script>
+</body>
+</html>

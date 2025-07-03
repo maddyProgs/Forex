@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Signals Widget</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .trading-widget {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            width: 100%;
+            max-width: 1200px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .widget-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .widget-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .widget-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .signals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .signal-card {
+            background: #fff;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .signal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .signal-header {
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            padding: 15px 20px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .signal-symbol {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .signal-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .signal-type.buy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .signal-type.sell {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .signal-body {
+            padding: 20px;
+        }
+
+        .chart-container {
+            height: 200px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .signal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .signal-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .time-info {
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .view-detail-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .view-detail-btn:hover {
+            background: #5a67d8;
+        }
+
+        /* Detail View Styles */
+        .signal-detail {
+            display: none;
+            padding: 30px;
+        }
+
+        .signal-detail.active {
+            display: block;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .detail-symbol {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .large-chart {
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .detail-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+
+        .detail-card h3 {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .detail-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #dc3545;
+            font-size: 16px;
+        }
+
+        .current-time {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #6c757d;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        @media (max-width: 768px) {
+            .signals-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            
+            .signal-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="trading-widget" id="tradingWidget">
+        <div class="widget-header">
+            <h1>🚀 Trading Signals</h1>
+            <p>Real-time market analysis and trading opportunities</p>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            Loading signals...
+        </div>
+        
+        <div id="signalsGrid" class="signals-grid" style="display: none;">
+            <!-- Signals will be populated here -->
+        </div>
+        
+        <div id="signalDetail" class="signal-detail">
+            <button class="back-btn" onclick="showSignalsGrid()">← Back to Signals</button>
+            <div id="detailContent">
+                <!-- Detail content will be populated here -->
+            </div>
+        </div>
+        
+        <div class="current-time" id="currentTime"></div>
+    </div>
+
+    <script>
+        class TradingSignalsWidget {
+            constructor(config = {}) {
+                this.apiBaseUrl = config.apiUrl || 'https://your-api-domain.com/api';
+                this.signals = [];
+                this.currentSignal = null;
+                this.init();
+            }
+
+            init() {
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                this.loadSignals();
+            }
+
+            updateTime() {
+                const now = new Date();
+                const utcTime = now.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    timeZone: 'UTC',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                document.getElementById('currentTime').textContent = `UTC Time: ${utcTime}`;
+            }
+
+            async apiCall(endpoint) {
+                try {
+                    const response = await fetch(`${this.apiBaseUrl}/${endpoint}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('API call failed:', error);
+                    // Return mock data for demo purposes
+                    return this.getMockData(endpoint);
+                }
+            }
+
+            getMockData(endpoint) {
+                if (endpoint === 'get-signals') {
+                    return {
+                        signals: JSON.stringify([
+                            {
+                                _id: "1",
+                                symbol: "EURUSD",
+                                type: "BUY",
+                                Entry: "1.0850",
+                                Target1: "1.0900",
+                                Target2: "1.0950",
+                                StopLoss: "1.0800",
+                                strategy: "Entry at price 1.0850 range with targets at 1.0900 and 1.0950, stop-loss at 1.0800",
+                                timestamp: new Date().toISOString()
+                            },
+                            {
+                                _id: "2",
+                                symbol: "GBPUSD",
+                                type: "SELL",
+                                Entry: "1.2650",
+                                Target1: "1.2600",
+                                Target2: "1.2550",
+                                StopLoss: "1.2700",
+                                strategy: "Entry at price 1.2650 range with targets at 1.2600 and 1.2550, stop-loss at 1.2700",
+                                timestamp: new Date().toISOString()
+                            },
+                            {
+                                _id: "3",
+                                symbol: "XAUUSD",
+                                type: "BUY",
+                                Entry: "2010.50",
+                                Target1: "2025.00",
+                                Target2: "2040.00",
+                                StopLoss: "1995.00",
+                                strategy: "Entry at price 2010.50 range with targets at 2025.00 and 2040.00, stop-loss at 1995.00",
+                                timestamp: new Date().toISOString()
+                            }
+                        ])
+                    };
+                }
+                
+                if (endpoint.startsWith('get-signal/')) {
+                    const id = endpoint.split('/')[1];
+                    const mockSignals = JSON.parse(this.getMockData('get-signals').signals);
+                    return mockSignals.find(s => s._id === id) || null;
+                }
+                
+                return null;
+            }
+
+            async loadSignals() {
+                try {
+                    const response = await this.apiCall('get-signals');
+                    let parsedSignals = [];
+                    
+                    if (response && response.signals) {
+                        parsedSignals = typeof response.signals === 'string' 
+                            ? JSON.parse(response.signals) 
+                            : response.signals;
+                    }
+                    
+                    this.signals = parsedSignals.map(signal => ({
+                        ...signal,
+                        _id: this.normalizeId(signal._id)
+                    }));
+                    
+                    this.renderSignals();
+                } catch (error) {
+                    console.error('Error loading signals:', error);
+                    this.showError('Failed to load trading signals');
+                }
+            }
+
+            normalizeId(id) {
+                if (!id) return '';
+                if (typeof id === 'string') return id;
+                return id.$oid || '';
+            }
+
+            parseEntryPrice(strategy) {
+                const match = strategy.match(/price ([\d.]+) range/);
+                return match ? match[1] : 'N/A';
+            }
+
+            parseTargets(strategy) {
+                const matches = strategy.match(/targets at ([\d.]+) and ([\d.]+)/);
+                return matches ? `${matches[1]} / ${matches[2]}` : 'N/A';
+            }
+
+            parseStopLoss(strategy) {
+                const match = strategy.match(/stop-loss at ([\d.]+)/);
+                return match ? match[1] : 'N/A';
+            }
+
+            renderSignals() {
+                const container = document.getElementById('signalsGrid');
+                const loading = document.getElementById('loading');
+                
+                if (this.signals.length === 0) {
+                    this.showError('No signals available');
+                    return;
+                }
+
+                const signalsHtml = this.signals.map(signal => `
+                    <div class="signal-card" onclick="widget.showSignalDetail('${signal._id}')">
+                        <div class="signal-header">
+                            <div class="signal-symbol">${signal.symbol || 'N/A'}</div>
+                            <span class="signal-type ${(signal.type || '').toLowerCase()}">${signal.type || 'N/A'}</span>
+                        </div>
+                        <div class="signal-body">
+                            <div class="chart-container">
+                                📈 Chart: ${signal.symbol || 'N/A'}
+                            </div>
+                            <div class="signal-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Entry</div>
+                                    <div class="detail-value">${signal.Entry || this.parseEntryPrice(signal.strategy || '')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Targets</div>
+                                    <div class="detail-value">${signal.Target1 && signal.Target2 ? `${signal.Target1} / ${signal.Target2}` : this.parseTargets(signal.strategy || '')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Stop Loss</div>
+                                    <div class="detail-value">${signal.StopLoss || this.parseStopLoss(signal.strategy || '')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Type</div>
+                                    <div class="detail-value">${signal.type || 'N/A'}</div>
+                                </div>
+                            </div>
+                            <div class="signal-actions">
+                                <div class="time-info">
+                                    🕒 ${signal.timestamp ? new Date(signal.timestamp).toLocaleTimeString() : 'Recent'}
+                                </div>
+                                <button class="view-detail-btn" onclick="event.stopPropagation(); widget.showSignalDetail('${signal._id}')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = signalsHtml;
+                loading.style.display = 'none';
+                container.style.display = 'grid';
+            }
+
+            async showSignalDetail(signalId) {
+                try {
+                    const response = await this.apiCall(`get-signal/${signalId}`);
+                    let signal = response;
+                    
+                    if (typeof signal === 'string') {
+                        signal = JSON.parse(signal);
+                    }
+                    
+                    if (!signal) {
+                        // Fallback to signals array
+                        signal = this.signals.find(s => s._id === signalId);
+                    }
+                    
+                    if (!signal) {
+                        this.showError('Signal not found');
+                        return;
+                    }
+
+                    // Normalize signal data
+                    const normalizedSignal = {
+                        ...signal,
+                        type: signal.Type || signal.type || '',
+                        Entry: signal.Entry || signal.entry || '',
+                        Target1: signal.Target1 || signal.target1 || '',
+                        Target2: signal.Target2 || signal.target2 || '',
+                        StopLoss: signal.StopLoss || signal.stopLoss || ''
+                    };
+
+                    this.currentSignal = normalizedSignal;
+                    this.renderSignalDetail(normalizedSignal);
+                    
+                    document.getElementById('signalsGrid').style.display = 'none';
+                    document.getElementById('signalDetail').classList.add('active');
+                    
+                } catch (error) {
+                    console.error('Error loading signal detail:', error);
+                    this.showError('Failed to load signal details');
+                }
+            }
+
+            renderSignalDetail(signal) {
+                const detailContent = document.getElementById('detailContent');
+                
+                detailContent.innerHTML = `
+                    <div class="detail-symbol">${signal.symbol || 'N/A'}</div>
+                    <span class="signal-type ${(signal.type || '').toLowerCase()}" style="font-size: 16px; margin-bottom: 20px; display: inline-block;">
+                        ${signal.type || 'N/A'}
+                    </span>
+                    
+                    <div class="large-chart">
+                        📊 Detailed Chart: ${signal.symbol || 'N/A'}
+                        <br><small>TradingView integration would appear here</small>
+                    </div>
+                    
+                    <div class="detail-grid">
+                        <div class="detail-card">
+                            <h3>Entry Price</h3>
+                            <div class="value">${signal.Entry || this.parseEntryPrice(signal.strategy || '')}</div>
+                        </div>
+                        <div class="detail-card">
+                            <h3>Target 1</h3>
+                            <div class="value">${signal.Target1 || 'N/A'}</div>
+                        </div>
+                        <div class="detail-card">
+                            <h3>Target 2</h3>
+                            <div class="value">${signal.Target2 || 'N/A'}</div>
+                        </div>
+                        <div class="detail-card">
+                            <h3>Stop Loss</h3>
+                            <div class="value">${signal.StopLoss || this.parseStopLoss(signal.strategy || '')}</div>
+                        </div>
+                    </div>
+                    
+                    ${signal.strategy ? `
+                        <div class="detail-card" style="margin-top: 20px;">
+                            <h3>Strategy</h3>
+                            <p style="margin-top: 10px; line-height: 1.5; color: #2c3e50;">${signal.strategy}</p>
+                        </div>
+                    ` : ''}
+                `;
+            }
+
+            showError(message) {
+                const loading = document.getElementById('loading');
+                const container = document.getElementById('signalsGrid');
+                
+                loading.innerHTML = `<div class="error-message">⚠️ ${message}</div>`;
+                container.style.display = 'none';
+            }
+        }
+
+        function showSignalsGrid() {
+            document.getElementById('signalDetail').classList.remove('active');
+            document.getElementById('signalsGrid').style.display = 'grid';
+        }
+
+        // Initialize widget
+        const widget = new TradingSignalsWidget({
+            apiUrl: 'https://your-api-domain.com/api' // Replace with your actual API URL
+        });
+
+        // Global function for embedding
+        window.TradingSignalsWidget = TradingSignalsWidget;
+    </script>
+</body>
+</html>

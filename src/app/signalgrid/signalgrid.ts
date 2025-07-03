@@ -1,5 +1,6 @@
-//singalgrid.ts
-import { Component, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+//signalgrid.ts
+
+import { Component, inject, AfterViewInit, Input,ViewChild, ElementRef,OnInit } from '@angular/core';
 import { ApiService } from '../service/httpservice';
 import { CommonModule } from '@angular/common';
 import { faInfoCircle, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +9,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router } from '@angular/router';
 import { TradingSignal } from '../TradingSignal';
 import { Signaldetail } from '../signaldetail/signaldetail';
+import { HttpClient } from '@angular/common/http';
 
 interface MongoId {
   $oid: string;
@@ -20,18 +22,40 @@ interface MongoId {
   templateUrl: './signalgrid.html',
   styleUrl: './signalgrid.css'
 })
-export class Signalgrid implements AfterViewInit { 
+export class Signalgrid implements AfterViewInit, OnInit { 
   private apiService = inject(ApiService);
   private router = inject(Router);
-  
-  signals$: Observable<TradingSignal[]>;
-  
+  private http = inject(HttpClient);
+
+  @Input() apiUrl: string = 'https://fastapi-1-zl38.onrender.com/get-signals/';  // default fallback
+
+  signals$: Observable<TradingSignal[]> = new Observable();
+
   // Font Awesome icons
   faInfoCircle = faInfoCircle;
   faClock = faClock;
   faArrowLeft = faArrowLeft;
 
   activeSignal: TradingSignal | null = null;
+
+  ngOnInit() {
+    this.signals$ = this.apiService.get<{ signals: string }>(this.apiUrl)
+      .pipe(
+        map(response => {
+          try {
+            const parsed = JSON.parse(response.signals) as TradingSignal[];
+            return parsed.map(s => ({
+              ...s,
+              _id: this.normalizeId(s._id)
+            }));
+          } catch (e) {
+            console.error('Signal parse error:', e);
+            return [];
+          }
+        })
+      );
+  }
+
 
   constructor() {
     this.signals$ = this.apiService.get<{ signals: string }>('get-signals')

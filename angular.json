@@ -5,7 +5,6 @@
   "projects": {
     "Forex": {
       "projectType": "application",
-      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -19,7 +18,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/public",
+                "output": "/"
               }
             ],
             "styles": [
@@ -35,12 +35,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1mb", // Increase from 500kb
-                  "maximumError": "1.5mb" // Increase from 1mb
+                  "maximumWarning": "1mb",
+                  "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kb", // For individual component CSS
+                  "maximumWarning": "10kb",
                   "maximumError": "15kb"
                 }
               ],
@@ -50,6 +50,41 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "web-component": {
+              "outputPath": "dist/signal-widget",
+              "index": "src/webComponentIndex.html",
+              "browser": "src/main.ts",
+              "polyfills": ["zone.js"],
+              "tsConfig": "tsconfig.app.json",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "src/public",
+                  "output": "/"
+                }
+              ],
+              "styles": [
+                "src/app/signalgrid/signalgrid.css",
+                "src/app/signaldetail/signaldetail.css",
+                "src/styles.css"
+              ],
+              "scripts": [],
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -62,26 +97,12 @@
             },
             "development": {
               "buildTarget": "Forex:build:development"
+            },
+            "web-component": {
+              "buildTarget": "Forex:build:web-component"
             }
           },
           "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular/build:extract-i18n"
-        },
-        "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": ["src/styles.css"]
-          }
         }
       }
     }
